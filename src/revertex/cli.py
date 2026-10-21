@@ -348,7 +348,8 @@ def cli(args=None) -> None:
 
     axion_parser = subparsers.add_parser(
         "axion-kin",
-        help="Generate final states of axion interactions (axioelectric, compton, pair).",
+        help="Axion interaction to simulate: axioelectric (e-), compton (e- + gamma), "
+"pair (e- + e+), primakoff (gamma)",
     )
     axion_parser.add_argument(
         "--process",

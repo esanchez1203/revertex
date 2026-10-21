@@ -34,6 +34,16 @@ _PAIR_BATCH = 200_000
 # fraction of isotropic proposals for the pair production lepton angles
 _PAIR_ISO_FRAC = 0.2
 
+# atomic screening for pair production in germanium: Thomas-Fermi radius and
+# Moliere's three-Yukawa fit of the Thomas-Fermi form factor
+_Z_GE = 32
+_A_TF_KEV = 0.885 * 0.529177e-8 * _Z_GE ** (-1 / 3) / _HBARC_KEV_CM  # in 1/keV
+_MOLIERE_ALPHA = (0.10, 0.55, 0.35)
+_MOLIERE_BETA = (6.0, 1.2, 0.3)
+
+# above this axion mass (keV) the pair production sampling becomes inefficient
+_PAIR_MASS_WARN = 900.0
+
 # Dirac matrices (Dirac representation) and metric for the pair production traces
 _I2 = np.eye(2)
 _Z2 = np.zeros((2, 2))
@@ -50,14 +60,14 @@ _GAMMA5 = np.block([[_Z2, _I2], [_I2, _Z2]]).astype(complex)
 _I4 = np.eye(4, dtype=complex)
 _METRIC = np.array([1.0, -1.0, -1.0, -1.0])
 
-PROCESSES = ("axioelectric", "compton", "pair")
+PROCESSES = ("axioelectric", "compton", "pair", "primakoff")
 
 
 def save_axion_kinematics(
     n_gen: int,
     out_file: str,
     *,
-    process: str,
+    process: str,prima
     energy: float,
     mass: float = 0.0,
     seed: int | None = None,
@@ -72,7 +82,8 @@ def save_axion_kinematics(
     out_file
         path to the output file.
     process
-        the axion interaction, one of `axioelectric`, `compton` or `pair`.
+        the axion interaction, one of `axioelectric`, `compton`, `pair` or
+        `primakoff`.
     energy
         total energy of the axion.
     mass
@@ -130,7 +141,12 @@ def generate_axion_kinematics(
       energy-momentum conservation.
     - `pair`: a + Z -> Z + e- + e+ in the Coulomb field of the nucleus, the energies
       and directions of both leptons are sampled from the Born-level matrix
-      element (without screening or Coulomb corrections).
+      element (Born approximation with atomic screening, no Coulomb corrections).
+    - `primakoff`: a + Z -> Z + gamma, inverse Primakoff conversion in the
+      Coulomb field of the nucleus (via the axion-photon coupling), a single
+      photon with the full axion energy emitted along the axion direction (the
+      nuclear recoil and the photon angle, of order m_a^2 / E^2 and
+      1 / (E r_0), are negligible).
 
     The axions arrive isotropically and all particles of an event are emitted at
     time zero.
@@ -140,7 +156,8 @@ def generate_axion_kinematics(
     size
         number of interactions to generate.
     process
-        the axion interaction, one of `axioelectric`, `compton` or `pair`.
+        the axion interaction, one of `axioelectric`, `compton`, `pair` or
+        `primakoff`.
     energy
         total energy of the axion.
     mass
@@ -174,6 +191,8 @@ def generate_axion_kinematics(
         return _generate_axioelectric(size, energy, axis)
     if process == "compton":
         return _generate_compton(size, energy, mass, axis, rng)
+    if process == "primakoff":
+        return _generate_primakoff(size, energy, axis)
 
     return _generate_pair(size, energy, mass, axis, rng)
 
@@ -326,6 +345,19 @@ def _generate_axioelectric(size: int, energy: float, axis: NDArray) -> ak.Array:
     return _make_output(directions, ekin, pid)
 
 
+def _generate_primakoff(size: int, energy: float, axis: NDArray) -> ak.Array:
+    """Generate the photon of inverse Primakoff conversion.
+
+    The photon gets the full axion energy and is emitted along the axion
+    direction.
+    """
+    directions = axis[:, None, :]
+    ekin = np.full((size, 1), energy)
+    pid = np.full((size, 1), _PID_GAMMA)
+
+    return _make_output(directions, ekin, pid)
+
+
 def _generate_compton(
     size: int, energy: float, mass: float, axis: NDArray, rng: np.random.Generator
 ) -> ak.Array:
@@ -383,6 +415,14 @@ def _generate_pair(
         msg = f"pair production needs an axion energy above {2 * _ME:.1f} keV not {energy} keV"
         raise ValueError(msg)
 
+    if mass > _PAIR_MASS_WARN:
+        msg = (
+            f"pair production with an axion mass of {mass:.0f} keV: close to 2 m_e the "
+            "cross section is very peaked and the sampling becomes inefficient and "
+            "less reliable, above 2 m_e the axion decays (a -> e+ e-)"
+        )
+        log.warning(msg)
+
     k = np.tile([energy, 0.0, 0.0, np.sqrt(energy**2 - mass**2)], (_PAIR_BATCH, 1))
 
     # pilot batch to set the envelope
@@ -425,9 +465,10 @@ def _generate_pair(
 def _pair_msq(k: NDArray, p_minus: NDArray, p_plus: NDArray) -> NDArray:
     """Matrix element of a + Z -> Z + e- + e+ in a static Coulomb field.
 
-    Born approximation for a point-like nucleus, summed over the lepton spins and
-    with couplings stripped. The Coulomb photon couples via `gamma^0` with a
-    propagator `1 / |q|^2`. With a vector instead of a pseudoscalar vertex the
+    Born approximation, summed over the lepton spins and with couplings
+    stripped, with the screening of the nuclear charge by the atomic electrons
+    (Thomas-Fermi form factor, see :func:`_screening`). The Coulomb photon
+    couples via `gamma^0` with a propagator `1 / |q|^2`. With a vector instead of a pseudoscalar vertex the
     same code reproduces the Bethe-Heitler cross section.
 
     Parameters
@@ -460,7 +501,24 @@ def _pair_msq(k: NDArray, p_minus: NDArray, p_plus: NDArray) -> NDArray:
         axis2=2,
     ).real
 
-    return trace / q3_sq**2
+    # atomic screening of the nuclear charge: the Coulomb field is multiplied by
+    # 1 - F(q), with the Thomas-Fermi form factor in Moliere's approximation
+    return trace / q3_sq**2 * _screening(np.sqrt(q3_sq)) ** 2
+
+
+def _screening(q: NDArray) -> NDArray:
+    """Screening factor 1 - F(q) of the nuclear Coulomb field (q in keV).
+
+    Thomas-Fermi atom in Moliere's approximation: the potential is a sum of
+    Yukawa terms, so 1 - F(q) = sum_i alpha_i q^2 / (q^2 + (beta_i / a_TF)^2).
+    It is ~1 for momentum transfers well above ~10 keV and suppresses the
+    long-range (small q) part of the field.
+    """
+    q2 = q**2
+    return sum(
+        a * q2 / (q2 + (b / _A_TF_KEV) ** 2)
+        for a, b in zip(_MOLIERE_ALPHA, _MOLIERE_BETA)
+    )
 
 
 def _pair_weights(
