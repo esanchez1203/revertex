@@ -67,7 +67,7 @@ def save_axion_kinematics(
     n_gen: int,
     out_file: str,
     *,
-    process: str,prima
+    process: str,
     energy: float,
     mass: float = 0.0,
     seed: int | None = None,
