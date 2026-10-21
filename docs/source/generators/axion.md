@@ -246,8 +246,6 @@ $$
 and the generator emits a single photon with the full axion energy along the
 axion direction.
 
-(normalization)=
-
 ## Normalization
 
 The expected number of events of each channel is
@@ -320,12 +318,6 @@ No positions are written: the vertices are sampled by remage (see below). No
 rate is written either: the normalization depends on the flux and couplings, see
 [Normalization](#normalization).
 
-## Chunking and reproducibility
-
-Events are generated and written in chunks of 1 × 10⁶. Each chunk receives a
-different seed (`seed × 7ⁱ` for chunk _i_), following the same convention as all
-other _revertex_ generators, so the output is reproducible for a fixed `--seed`.
-
 ## Using the output in remage
 
 The file contains kinematics only, so the interaction point is chosen by remage,
@@ -391,64 +383,40 @@ The unit tests (`tests/test_axion.py`) check:
 
 ## References
 
-(ref1)=
-
 - [1] F. T. Avignone III et al., _Laboratory limits on solar axions from an
   ultralow-background germanium spectrometer_, Phys. Rev. D 37, 618 (1988).
 
-(ref2)=
-
 - [2] A. R. Zhitnitsky and Yu. I. Skovpen, _Problem of axion detection_, Sov. J.
   Nucl. Phys. 29, 513 (1979).
-
-(ref3)=
 
 - [3] G. Bellini et al. (Borexino), _Search for solar axions produced in the
   p(d,³He)A reaction with Borexino detector_, Phys. Rev. D 85, 092003 (2012),
   [arXiv:1203.6258](https://arxiv.org/abs/1203.6258).
 
-(ref4)=
-
 - [4] W. Buchmüller and F. Hoogeveen, _Coherent production of light scalar or
   pseudoscalar particles in Bragg scattering_, Phys. Lett. B 237, 278 (1990).
-
-(ref5)=
 
 - [5] H. Primakoff, _Photo-production of neutral mesons in nuclear electric
   fields and the mean life of the neutral meson_, Phys. Rev. 81, 899 (1951).
 
-(ref6)=
-
 - [6] M. Pospelov, A. Ritz and M. Voloshin, _Bosonic super-WIMPs as keV-scale
   dark matter_, Phys. Rev. D 78, 115012 (2008).
-
-(ref7)=
 
 - [7] A. Derevianko et al., _Axio-electric effect_, Phys. Rev. D 82, 065006
   (2010).
 
-(ref8)=
-
 - [8] H. Bethe and W. Heitler, _On the stopping of fast particles and on the
   creation of positive electrons_, Proc. R. Soc. London A 146, 83 (1934).
-
-(ref9)=
 
 - [9] G. Molière, _Theorie der Streuung schneller geladener Teilchen I_, Z.
   Naturforsch. A 2, 133 (1947).
 
-(ref10)=
-
 - [10] Y.-S. Tsai, _Pair production and bremsstrahlung of charged leptons_, Rev.
   Mod. Phys. 46, 815 (1974).
-
-(ref11)=
 
 - [11] L. C. Maximon, _Simple analytic representations of the total cross
   section for electron-positron pair production_, J. Res. Natl. Bur. Stand. 72B,
   79 (1968).
-
-(ref12)=
 
 - [12] M. Agostini et al. (Borexino), _Search for solar axions with Borexino_,
   [arXiv:2504.19135](https://arxiv.org/abs/2504.19135) (2025).
