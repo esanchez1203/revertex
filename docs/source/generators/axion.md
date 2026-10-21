@@ -246,51 +246,6 @@ $$
 and the generator emits a single photon with the full axion energy along the
 axion direction.
 
-## Normalization
-
-The expected number of events of each channel is
-
-$$
-S = \Phi_a \, \sigma \, N_\mathrm{atoms} \, T \, \varepsilon ,
-$$
-
-where $\varepsilon$ is the detection efficiency obtained by simulating the
-generated events. For solar axions from p + d → ³He + a the flux at Earth is
-\[[3](#ref3), eq. 7\]
-
-$$
-\Phi_a = 3.23 \times 10^{10}\, g_{3aN}^2 \left(\frac{p_a}{p_\gamma}\right)^3
-\mathrm{cm}^{-2}\,\mathrm{s}^{-1},
-$$
-
-so the electron channels scale with $(g_{ae} g_{3aN})^2$ and inverse Primakoff
-with $(g_{a\gamma} g_{3aN})^2$. Cross sections per Ge atom used in the analysis,
-for $E_a = 5.49$ MeV:
-
-- **Compton:** $Z\,\sigma_C$ from {func}`.axion.compton_cross_section`, $1.38
-  \times 10^{-23}\,\mathrm{cm}^2 \times g_{ae}^2$ at $m_a = 0$.
-- **Pair:** numerical integration of the screened matrix element above, $1.80
-  \times 10^{-23}\,\mathrm{cm}^2 \times g_{ae}^2$ at $m_a = 0$, rising to $\sim
-  2 \times 10^{-21}\,\mathrm{cm}^2$ at $m_a = 1$ MeV.
-- **Axioelectric:** the Borexino value for carbon \[[3](#ref3)\] scaled with
-  $Z^5$, $\approx 3.4 \times 10^{-25}\,\mathrm{cm}^2 \times g_{ae}^2$. This is
-  an order-of-magnitude estimate; a more precise value follows from the
-  photoelectric cross section \[[6](#ref6),[7](#ref7)\]: $\sigma_{ae} =
-  \sigma_{pe}(E_a)\,\frac{3 E_a^2}{16\pi\alpha m_e^2}\, g_{ae}^2\, \frac{1 -
-  \beta^{2/3}/3}{\beta}$, with $\beta$ the axion velocity.
-- **Primakoff:** with screening \[[4](#ref4),[12](#ref12)\],
-
-  $$
-  \sigma_{P} = \frac{Z^2 \alpha\, g_{a\gamma}^2}{2} \left[ \frac{2x + 1}{4x}
-  \ln(1 + 4x) - 1 \right], \qquad x = (a_{TF}\, p_a)^2 ,
-  $$
-
-  $8.3 \times 10^{-27}\,\mathrm{cm}^2 \times (g_{a\gamma}\cdot\mathrm{GeV})^2$
-  at $m_a = 0$. For massive axions without screening \[[3](#ref3),[5](#ref5)\]
-  $\sigma_P = \frac{Z^2\alpha g_{a\gamma}^2}{2}\left[\frac{1+\beta^2}{2\beta^2}
-  \ln\frac{1+\beta}{1-\beta} - \frac{1}{\beta}\right]$; the smaller of the two
-  is used.
-
 ## Output format
 
 The generator writes one table to the LH5 file, with one row per particle:
