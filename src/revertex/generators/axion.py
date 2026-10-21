@@ -517,7 +517,7 @@ def _screening(q: NDArray) -> NDArray:
     q2 = q**2
     return sum(
         a * q2 / (q2 + (b / _A_TF_KEV) ** 2)
-        for a, b in zip(_MOLIERE_ALPHA, _MOLIERE_BETA)
+        for a, b in zip(_MOLIERE_ALPHA, _MOLIERE_BETA, strict=True)
     )
 
 
