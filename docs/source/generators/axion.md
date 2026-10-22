@@ -23,7 +23,7 @@ Sun over a long exposure. All particles of an event are emitted at time zero.
 
 The generator describes a single interaction of a given type. The rate of each
 channel (flux, cross section, couplings) is not part of the event generation and
-is applied in the analysis, see [Normalization](#normalization).
+is applied in the analysis.
 
 Natural units ($\hbar = c = 1$) are used below; $m_e$ is the electron mass,
 $\alpha$ the fine-structure constant and $Z = 32$ for germanium.
@@ -193,9 +193,7 @@ forward peak $P(\theta) \propto \theta\theta_0^2 / (\theta^2 + \theta_0^2)^2$,
 $\theta_0 = m_e/E$, mixed with 20 % isotropic proposals. The positron energy
 spectrum $d\sigma/dT_+$, the angular distributions and the correlations between
 the two leptons therefore follow the matrix element; they are not parametrized
-separately. The normalization of $d\sigma$ is not needed for the sampling; the
-total cross section is obtained by numerical integration of the same expression
-(see [Normalization](#normalization)).
+separately. 
 
 **Screening.** The atomic electrons screen the nuclear charge at distances above
 the Thomas-Fermi radius $a_{TF} = 0.885\, a_0 Z^{-1/3}$. The Coulomb field is
@@ -269,9 +267,7 @@ The generator writes one table to the LH5 file, with one row per particle:
 | `pair`         | e⁻, e⁺                    |
 | `primakoff`    | γ                         |
 
-No positions are written: the vertices are sampled by remage (see below). No
-rate is written either: the normalization depends on the flux and couplings, see
-[Normalization](#normalization).
+No positions are written: the vertices are sampled by remage (see below). 
 
 ## Using the output in remage
 
