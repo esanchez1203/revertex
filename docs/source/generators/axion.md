@@ -138,8 +138,8 @@ Skovpen \[[2](#ref2)\], as quoted by Borexino \[[3](#ref3), eq. 8\]:
 
 $$
 \sigma_{C} = \frac{\alpha g_{ae}^2}{8 m_e^2 p_a} \left[ \frac{2 m_e^2 (m_e +
-E_a)\, y}{(m_e^2 + y)^2} + \frac{4 m_e (m_a^4 + 2 m_a^2 m_e^2 - 4 m_e^2
-E_a^2)}{y\,(m_e^2 + y)} + \frac{4 m_e^2 p_a^2 + m_a^4}{p_a\, y} \ln\frac{m_e +
+E_a)\ y}{(m_e^2 + y)^2} + \frac{4 m_e (m_a^4 + 2 m_a^2 m_e^2 - 4 m_e^2
+E_a^2)}{y\ (m_e^2 + y)} + \frac{4 m_e^2 p_a^2 + m_a^4}{p_a\ y} \ln\frac{m_e +
 E_a + p_a}{m_e + E_a - p_a} \right],
 $$
 
