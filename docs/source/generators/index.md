@@ -7,4 +7,5 @@ This section documents the generators.
 
 Alpha-n wrapper <alpha_n>
 Atmospheric muon generator (musun-gs) <musun_gs>
+Axion interaction generator <axion>
 ```
