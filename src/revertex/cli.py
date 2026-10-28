@@ -7,7 +7,15 @@ import random
 import pyg4ometry
 
 from revertex import core, utils
-from revertex.generators import alpha_n, beta, borehole, musun_gs, shell, surface
+from revertex.generators import (
+    alpha_n,
+    axion,
+    beta,
+    borehole,
+    musun_gs,
+    shell,
+    surface,
+)
 from revertex.utils import setup_log
 
 log = logging.getLogger(__name__)
@@ -338,6 +346,55 @@ def cli(args=None) -> None:
         help="Container runtime: 'docker' or 'shifter' (default: auto-detect).",
     )
 
+    axion_parser = subparsers.add_parser(
+        "axion-kin",
+        help="Axion interaction to simulate: axioelectric (e-), compton (e- + gamma), "
+        "pair (e- + e+), primakoff (gamma)",
+    )
+    axion_parser.add_argument(
+        "--process",
+        "-p",
+        required=True,
+        type=str,
+        choices=list(axion.PROCESSES),
+        help="Axion interaction to simulate",
+    )
+    axion_parser.add_argument(
+        "--energy",
+        "-E",
+        required=True,
+        type=float,
+        help="Total energy of the axion",
+    )
+    axion_parser.add_argument(
+        "--mass",
+        "-m",
+        default=0.0,
+        type=float,
+        help="Mass of the axion (default: 0)",
+    )
+    axion_parser.add_argument(
+        "--eunit",
+        "-e",
+        default="keV",
+        type=str,
+        help="Unit for the energy and mass (default: keV)",
+    )
+    axion_parser.add_argument(
+        "--out-file",
+        "-o",
+        required=True,
+        type=str,
+        help="Path to the output file. ",
+    )
+    axion_parser.add_argument(
+        "--n-events",
+        "-n",
+        required=True,
+        type=int,
+        help="Number of events to generate",
+    )
+
     args = parser.parse_args(args)
 
     log_level = (None, logging.INFO, logging.DEBUG)[min(args.verbose, 2)]
@@ -355,6 +412,24 @@ def cli(args=None) -> None:
             eunit=args.eunit,
         )
 
+    elif args.command == "axion-kin":
+        msg = "Generating axion interactions for \n"
+        msg += f"process:   {args.process} \n"
+        msg += f"energy:    {args.energy} {args.eunit} \n"
+        msg += f"mass:      {args.mass} {args.eunit} \n"
+        msg += f"output:    {args.out_file} \n"
+        msg += f"seed:      {args.seed}"
+        log.info(msg)
+
+        axion.save_axion_kinematics(
+            args.n_events,
+            args.out_file,
+            process=args.process,
+            energy=args.energy,
+            mass=args.mass,
+            seed=args.seed,
+            eunit=args.eunit,
+        )
     elif args.command == "hpge-surf-pos":
         msg = "Generating points on the HPGes for \n"
         msg += f"gdml:      {args.gdml} \n"
